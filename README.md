@@ -1,5 +1,9 @@
 # fable5skill
 
+## 📖 Guia de uso
+
+Guia completo (landing + passo a passo): **https://inematds.github.io/fable5skill/guia/**
+
 Skills para [Claude Code](https://claude.com/claude-code) que geram sites **scroll-film** — páginas onde a rolagem inteira funciona como um plano-sequência cinematográfico contínuo, que se dissolve no conteúdo normal do site ao final.
 
 ## scroll-film-studio
