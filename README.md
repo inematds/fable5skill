@@ -20,7 +20,7 @@ cp -r scroll-film-studio ~/.claude/skills/scroll-film-studio
 | Lane | O que é | Custo | Setup |
 |---|---|---|---|
 | **A — Pure-code** (padrão) | GSAP + Lenis: cenas fixadas, parallax, reveals | grátis | zero — só CDN |
-| **B — Footage (Higgsfield/Kie.ai/fal/Replicate)** | Vídeo real gerado por IA, encadeado shot-a-shot (last frame → next start image) | créditos do engine | conta própria no serviço |
+| **B — Footage (Higgsfield/Kie.ai/fal/Replicate)** | Vídeo real gerado por IA, encadeado shot-a-shot (last frame → next start image). Testada em produção com **Kie.ai Seedance** (`bytedance/v1-lite-image-to-video`, ~22 créditos/clipe 720p) | créditos do engine | conta própria no serviço |
 | **C — Footage via Agnes AI** | Mesmo contrato da Lane B, adaptado pro Agnes (`agnes-video-v2.0`, modo `keyframes`, interpola par de imagens em vez de gerar a partir de 1 start image) | **US$0** | `AGNES_API_KEY` |
 
 A Lane A funciona pra qualquer pessoa que baixe a skill, sem contas nem custo. As Lanes B/C são opt-in — só entram quando o usuário já tem (ou quer) um engine de vídeo por IA.
@@ -49,9 +49,21 @@ Toda decisão de **gosto** (conceito, direção de arte, paleta, tipografia, mot
 
 Todo build implementa um contrato de dev: `?jump=<scrollY>` pra pousar pré-rolado e `window.__ready` pra sinalizar que a página assentou. `scripts/verify.js` usa isso pra tirar screenshot em qualquer posição de scroll e medir jank real (p95/max de deltas de `requestAnimationFrame`), nunca FPS médio.
 
-### Exemplo construído com esta skill
+### Exemplo construído com esta skill — as 3 lanes lado a lado
 
-[Sinal — o scroll-film do INEMA.CLUB](https://inematds.github.io/inema-sitefilm/) — Lane C, gerado com Agnes AI, 5 capítulos indo do ruído de dados dispersos até o acesso centralizado do portal.
+**Sinal** ([repo](https://github.com/inematds/inema-sitefilm)) — o scroll-film do INEMA.CLUB, mesma jornada (Ruído → Convergência → Núcleo → Rede → Portal) construída pelas três lanes, com menu de versões no topo:
+
+| Versão | Lane / Engine | Link |
+|---|---|---|
+| Filme I | Lane C — Agnes AI (US$0, keyframes interpolados) | [ver](https://inematds.github.io/inema-sitefilm/) |
+| Filme II — Director's Cut | Lane C (mesma footage; filme dentro das letras, dots de capítulo, timeline de scrub) | [ver](https://inematds.github.io/inema-sitefilm/index2.html) |
+| Filme III | **Lane B — Kie.ai Seedance Lite** (cadeia last-frame→start real, ~112 créditos) | [ver](https://inematds.github.io/inema-sitefilm/index3.html) |
+| Code I | Lane A — GSAP+Lenis vertical (jank max 17ms) | [ver](https://inematds.github.io/inema-sitefilm/lane-a.html) |
+| Code II | Lane A — corrida horizontal pinada, âmbar | [ver](https://inematds.github.io/inema-sitefilm/lane-a2.html) |
+
+Os runners usados na Lane B do exemplo (`kie-chain.sh` pro Kie.ai e `fal-chain.sh` pro fal.ai — upload → createTask → poll → download → extração do último frame → gate SSIM) estão no [repo do exemplo](https://github.com/inematds/inema-sitefilm) e seguem o contrato de `scripts/chain-step.sh`.
+
+**Notas de campo do Kie.ai** (medidas na prática): modelo `bytedance/v1-lite-image-to-video` via `POST /api/v1/jobs/createTask` + poll em `GET /api/v1/jobs/recordInfo?taskId=`; **data URI não é aceito** — subir a imagem antes em `https://kieai.redpandaai.co/api/file-base64-upload` e passar a `downloadUrl`; saldo em `GET /api/v1/chat/credit`; ~22,5 créditos por clipe 720p/5s.
 
 ## Guardrails
 
